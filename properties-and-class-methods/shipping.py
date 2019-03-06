@@ -2,6 +2,10 @@ import iso6346
 
 
 class ShippingContainer:
+
+    HEIGHT_FT = 8.5
+    WIDTH_FT = 8.0
+
     next_serial = 11337 # class attribute
 
     @staticmethod
@@ -25,8 +29,9 @@ class ShippingContainer:
     def create_with_items(cls, owner_code, items, *args, **kwargs):
         return cls(owner_code, contents=list(items), *args, **kwargs)
 
-    def __init__(self, owner_code, contents):
+    def __init__(self, owner_code, length_ft, contents):
         self.owner_code = owner_code
+        self.length_ft = length_ft
         self.contents = contents
         # self.bic = ShippingContainer._make_bic_code(
         self.bic = self._make_bic_code(  # by changing this to self we get polymorphic BIC generation from the single
@@ -41,10 +46,16 @@ class ShippingContainer:
         #  at least from the point of view of the base class.
         # if you need polymorphic dispatch of @staticmethod invocations, call through the self instance
 
+    @property
+    def volume_ft3(self):
+        return ShippingContainer.HEIGHT_FT * ShippingContainer.WIDTH_FT * self.length_ft
+
 
 class RefrigeratedShippingContainer(ShippingContainer):
     #  *args, **kwargs were added to both @classmethods to support inheritance
     MAX_CELSIUS = 4.0
+
+    FRIDGE_VOLUME_FT3 = 100
 
     @staticmethod
     def _make_bic_code(owner_code, serial):
@@ -66,8 +77,8 @@ class RefrigeratedShippingContainer(ShippingContainer):
     # unlike other OO languages where constructors at every lvl inan inheritance hierarchy will be called automatically,
     # the same can't be said for initializes in Python.
 
-    def __init__(self, owner_code, contents, celsius):
-        super().__init__(owner_code, contents)  # we call super to get a reference  to the base class instance, we then
+    def __init__(self, owner_code, length_ft, contents, celsius):
+        super().__init__(owner_code, length_ft, contents)  # we call super to get a reference  to the base class instance, we then
         # call dunder-init on the returned reference and forward the constructor arguments
         # if celsius > RefrigeratedShippingContainer.MAX_CELSIUS:
         #     raise ValueError("Temperature too hot!")
@@ -115,3 +126,27 @@ class RefrigeratedShippingContainer(ShippingContainer):
     @fahrenheit.setter
     def fahrenheit(self, value):
         self.celsius = RefrigeratedShippingContainer._f_to_c(value)
+
+    @property
+    def volume_ft3(self):
+        """
+        overriding property getters is pretty straight forward
+        :return:
+        """
+        return super().volume_ft3 - RefrigeratedShippingContainer.FRIDGE_VOLUME_FT3
+
+
+class HeatedRefrigeratedShippingContainer(RefrigeratedShippingContainer):
+
+    MIN_CELSIUS = -20.0
+
+    @RefrigeratedShippingContainer.celsius.setter
+    def celsius(self, value):
+        """
+        overriding property setter is more complicated as we can se below.
+        :param value:
+        :return:
+        """
+        if value < HeatedRefrigeratedShippingContainer.MIN_CELSIUS:
+            raise ValueError("Temperature too cold!")
+        RefrigeratedShippingContainer.celsius.fset(self, value)
