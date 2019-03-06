@@ -48,6 +48,9 @@ class ShippingContainer:
 
     @property
     def volume_ft3(self):
+        return self._calc_volume()
+
+    def _calc_volume(self):
         return ShippingContainer.HEIGHT_FT * ShippingContainer.WIDTH_FT * self.length_ft
 
 
@@ -115,6 +118,12 @@ class RefrigeratedShippingContainer(ShippingContainer):
         :param value:
         :return:
         """
+        # if value > RefrigeratedShippingContainer.MAX_CELSIUS:
+        #     raise ValueError("Temperature too hot!")
+        # self._celsius = value
+        self._set_celsius(value)
+
+    def _set_celsius(self, value):
         if value > RefrigeratedShippingContainer.MAX_CELSIUS:
             raise ValueError("Temperature too hot!")
         self._celsius = value
@@ -127,26 +136,27 @@ class RefrigeratedShippingContainer(ShippingContainer):
     def fahrenheit(self, value):
         self.celsius = RefrigeratedShippingContainer._f_to_c(value)
 
-    @property
-    def volume_ft3(self):
+    def _calc_volume(self):
         """
         overriding property getters is pretty straight forward
         :return:
         """
-        return super().volume_ft3 - RefrigeratedShippingContainer.FRIDGE_VOLUME_FT3
+        return super()._calc_volume() - RefrigeratedShippingContainer.FRIDGE_VOLUME_FT3
 
 
 class HeatedRefrigeratedShippingContainer(RefrigeratedShippingContainer):
 
     MIN_CELSIUS = -20.0
 
-    @RefrigeratedShippingContainer.celsius.setter
-    def celsius(self, value):
+    # @RefrigeratedShippingContainer.celsius.setter
+    def _set_celsius(self, value):
         """
-        overriding property setter is more complicated as we can se below.
+        overriding property setter is more complicated as we can se below. - fixed
+        we can use the template method patter to avoid using fset
         :param value:
         :return:
         """
         if value < HeatedRefrigeratedShippingContainer.MIN_CELSIUS:
             raise ValueError("Temperature too cold!")
-        RefrigeratedShippingContainer.celsius.fset(self, value)
+        # RefrigeratedShippingContainer.celsius.fset(self, value)
+        super()._set_celsius(value)
