@@ -7,3 +7,11 @@ class SortedSet:
         :param items:
         """
         self._items = sorted(items) if items is not None else []
+
+    def __contains__(self, item):
+        """
+        container protocol!
+        :param item:
+        :return:
+        """
+        return item in self._items
