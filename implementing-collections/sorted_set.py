@@ -18,7 +18,11 @@ class SortedSet(Sequence):
         :param item:
         :return:
         """
-        return item in self._items
+        try:
+            self.index(item)
+            return True
+        except ValueError:
+            return False
 
     def __len__(self):
         return len(self._items)
@@ -52,12 +56,16 @@ class SortedSet(Sequence):
             return NotImplemented
         return self._items != rhs._items
 
-    def count(self, item):
+    def index(self, item):
         """
         we make use of binary search - bisect_left
         :param item:
         :return:
         """
         index = bisect_left(self._items, item)
-        found = (index != len(self._items)) and (self._items[index] == item)
-        return int(found)
+        if (index != len(self._items)) and (self._items[index] == item):
+            return index
+        raise ValueError("{} not found".format(repr(item)))
+
+    def count(self, item):
+        return int(item in self)
