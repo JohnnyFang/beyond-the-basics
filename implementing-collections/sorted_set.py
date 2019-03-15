@@ -26,4 +26,24 @@ class SortedSet:
         #    yield item
 
     def __getitem__(self, index):
-        return self._items[index]
+        result = self._items[index]
+        return SortedSet(result) if isinstance(index, slice) else result
+
+    def __repr__(self):
+        return "SortedSet({})".format(repr(self._items) if self._items else '')
+
+    def __eq__(self, rhs):
+        if not isinstance(rhs, SortedSet):
+            return NotImplemented
+        return self._items == rhs._items
+
+    def __ne__(self, rhs):
+        """
+        the Python docs are clear that when specializing the __eq__ in a subclass, we must also
+        specialize __ne__
+        :param rhs:
+        :return:
+        """
+        if not isinstance(rhs, SortedSet):
+            return NotImplemented
+        return self._items != rhs._items
