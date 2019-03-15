@@ -1,5 +1,6 @@
 from bisect import bisect_left
 from collections.abc import Sequence
+from itertools import chain
 
 
 class SortedSet(Sequence):
@@ -69,3 +70,11 @@ class SortedSet(Sequence):
 
     def count(self, item):
         return int(item in self)
+
+    def __add__(self, rhs):
+        """
+        concatenation
+        :param other:
+        :return:
+        """
+        return SortedSet(chain(self._items, rhs._items))
