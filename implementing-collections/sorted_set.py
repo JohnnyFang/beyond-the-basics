@@ -18,3 +18,9 @@ class SortedSet:
 
     def __len__(self):
         return len(self._items)
+
+    def __iter__(self):
+        return iter(self._items)
+        # or
+        # for item in self._items:
+        #    yield item
