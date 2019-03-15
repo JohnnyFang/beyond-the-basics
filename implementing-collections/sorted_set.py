@@ -78,3 +78,19 @@ class SortedSet(Sequence):
         :return:
         """
         return SortedSet(chain(self._items, rhs._items))
+
+    def __mul__(self, rhs):
+        """
+        Repetition Protocol
+        :param rhs:
+        :return:
+        """
+        return self if rhs > 0 else SortedSet()
+
+    def __rmul__(self, lhs):
+        """
+        Repetition Protocol
+        :param rhs:
+        :return:
+        """
+        return self * lhs
