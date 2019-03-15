@@ -6,7 +6,7 @@ class SortedSet:
         the default argument object, which is created one when the method is first defined
         :param items:
         """
-        self._items = sorted(items) if items is not None else []
+        self._items = sorted(set(items)) if items is not None else []
 
     def __contains__(self, item):
         """
@@ -15,3 +15,6 @@ class SortedSet:
         :return:
         """
         return item in self._items
+
+    def __len__(self):
+        return len(self._items)
