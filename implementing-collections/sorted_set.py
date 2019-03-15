@@ -24,3 +24,6 @@ class SortedSet:
         # or
         # for item in self._items:
         #    yield item
+
+    def __getitem__(self, index):
+        return self._items[index]
