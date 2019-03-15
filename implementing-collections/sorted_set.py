@@ -1,5 +1,6 @@
 from collections.abc import Sequence
 
+
 class SortedSet(Sequence):
 
     def __init__(self, items=None):
