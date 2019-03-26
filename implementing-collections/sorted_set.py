@@ -1,9 +1,9 @@
 from bisect import bisect_left
-from collections.abc import Sequence
+from collections.abc import Sequence, Set
 from itertools import chain
 
 
-class SortedSet(Sequence):
+class SortedSet(Sequence, Set):
 
     def __init__(self, items=None):
         """
@@ -94,3 +94,21 @@ class SortedSet(Sequence):
         :return:
         """
         return self * lhs
+
+    def issubset(self, iterable):
+        return self <= SortedSet(iterable)
+
+    def issuperset(self, iterable):
+        return self >= SortedSet(iterable)
+
+    def intersection(self, iterable):
+        return self & SortedSet(iterable)
+
+    def union(self, iterable):
+        return self | SortedSet(iterable)
+
+    def symmetric_difference(self, iterable):
+        return self ^ SortedSet(iterable)
+
+    def difference(self, iterable):
+        return self - SortedSet(iterable)
